@@ -1,0 +1,42 @@
+{
+  "name": "gallery",
+  "version": "0.0.1",
+  "description": "Sample app using Reactive Blocs",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --config webpack.dev.js",
+    "build": "rm -rf build && webpack --config webpack.prod.js"
+  },
+  "author": "Nairi Narinyan",
+  "license": "MIT",
+  "dependencies": {
+    "rambda": "^2.4.1",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
+    "react-pose": "^4.0.8",
+    "react-router-dom": "^5.0.0",
+    "react-scoped-styles": "^0.2.7",
+    "rxjs": "^6.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.8.8",
+    "@types/react-dom": "^16.8.3",
+    "@types/react-router-dom": "^4.3.1",
+    "awesome-typescript-loader": "^5.2.1",
+    "css-loader": "^2.1.1",
+    "html-webpack-plugin": "^3.2.0",
+    "raw-loader": "^2.0.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^0.23.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "svgo": "^1.2.0",
+    "svgson": "^3.1.0",
+    "typescript": "^3.3.4000",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1",
+    "webpack-merge": "^4.2.1",
+    "xml-formatter": "^1.1.0"
+  }
+}

@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const Svgo = require('svgo');
+const svgson = require('svgson');
+const format = require('xml-formatter');
+const R = require('rambda');
+
+const [,,source, iconName] = process.argv;
+const iconDefinitionsFile = path.resolve('../src/shared/components/icons/icon-definitions.svg');
+
+const svgo = new Svgo({
+    plugins:[
+        { removeViewBox: false },
+        { convertColors: { currentColor: true } }
+    ]
+});
+
+async function optimizeSvg(sourcePath) {
+    const icon = fs.readFileSync(path.resolve(sourcePath)).toString();
+    return svgo.optimize(icon);
+}
+
+async function replaceSvgWithSymbol(optimizedSvgPromise) {
+    const optimizedSvg = await optimizedSvgPromise;
+    const parsedSvg = await svgson.parse(optimizedSvg.data);
+    const transformedSvg = JSON.parse(JSON.stringify(parsedSvg));
+
+    transformedSvg.name = 'symbol';
+    transformedSvg.attributes = {
+        id: iconName,
+        viewBox: parsedSvg.attributes.viewBox
+    };
+
+    return transformedSvg;
+}
+
+async function writeTransformedSvg(transformedSvgPromise) {
+    const transformedSvg = await transformedSvgPromise;
+    const iconDefinitions = fs.readFileSync(iconDefinitionsFile).toString();
+    const parsedDefinitions = await svgson.parse(iconDefinitions);
+
+    parsedDefinitions.children.push(transformedSvg);
+
+    const iconDefinitionsString = svgson.stringify(parsedDefinitions);
+    fs.writeFileSync(iconDefinitionsFile, format(iconDefinitionsString));
+}
+
+const processSvg = R.compose(writeTransformedSvg, replaceSvgWithSymbol, optimizeSvg);
+processSvg(source);
