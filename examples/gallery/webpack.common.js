@@ -1,10 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const scopedStylesOptions = {
-    globalsPrefix: 'sk'
-};
-
 module.exports = {
     entry: './src/index.tsx',
     output: {
@@ -17,10 +13,7 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: [
-                    {
-                        loader: 'react-scoped-styles/script-loader',
-                        options: scopedStylesOptions
-                    },
+                    'react-scoped-styles/script-loader',
                     'awesome-typescript-loader'
                 ]
             },
@@ -34,26 +27,13 @@ module.exports = {
                 use: [
                     'style-loader',
                     'css-loader',
-                    {
-                        loader: 'react-scoped-styles/style-loader',
-                        options: scopedStylesOptions
-                    },
+                    'react-scoped-styles/style-loader',
                     'stylus-loader'
                 ]
             },
             {
                 test: /\.(png|jpg|gif)$/,
                 loader: 'file-loader'
-            },
-            {
-                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        name: '[name].[ext]',
-                        outputPath: 'fonts/'
-                    }
-                }
             }
         ]
     },

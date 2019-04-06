@@ -5,8 +5,10 @@ import { Icon } from '../shared/components/icons/icon';
 
 export const Home = () => {
     return (
-        <div>
-            <Icon icon="arrow" />
+        <div className="home">
+            <div className="icon">
+                <Icon icon="arrow" />
+            </div>
         </div>
     )
 };

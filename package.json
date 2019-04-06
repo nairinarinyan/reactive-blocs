@@ -1,23 +1,35 @@
 {
-  "name": "reactive-blocs",
-  "version": "0.0.1",
-  "description": "Reactive Blocs",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nairinarinyan/reactive-blocs.git"
-  },
-  "keywords": [
-    "reactive",
-    "blocs"
-  ],
-  "author": "Nairi Narinyan",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/nairinarinyan/reactive-blocs/issues"
-  },
-  "homepage": "https://github.com/nairinarinyan/reactive-blocs#readme"
+    "name": "reactive-blocs",
+    "version": "0.0.1",
+    "description": "Reactive Blocs",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc",
+        "build:watch": "tsc -w"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nairinarinyan/reactive-blocs.git"
+    },
+    "keywords": [
+        "reactive",
+        "blocs"
+    ],
+    "author": "Nairi Narinyan",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/nairinarinyan/reactive-blocs/issues"
+    },
+    "homepage": "https://github.com/nairinarinyan/reactive-blocs#readme",
+    "peerDependencies": {
+        "rxjs": "^6.4.0",
+        "react": "^16.8.6",
+        "react-dom": "^16.8.6"
+    },
+    "devDependencies": {
+        "typescript": "^3.4.2"
+    },
+    "dependencies": {
+        "rxjs": "^6.4.0"
+    }
 }
