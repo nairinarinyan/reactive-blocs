@@ -33,27 +33,3 @@ function execControlled(exec, initialValue, control) {
     return subject;
 }
 exports.execControlled = execControlled;
-// **********************************
-let vl = 120;
-const executor = () => {
-    console.log('coputing\n');
-    return rxjs_1.of(vl).pipe(operators_1.delay(100));
-};
-const value = execAlways(executor, 12);
-console.log('first subbing');
-value.subscribe(v => {
-    console.log('first', v);
-});
-setTimeout(() => {
-    console.log('second subbing');
-    vl += 500;
-    value.subscribe(v => {
-        console.log('second', v);
-    });
-}, 300);
-setTimeout(() => {
-    console.log('third subbing');
-    value.subscribe(v => {
-        console.log('third', v);
-    });
-}, 400);
