@@ -26,7 +26,7 @@ function execOnce(exec, initialValue) {
     return subject;
 }
 exports.execOnce = execOnce;
-function execControlled(exec, initialValue, control) {
+function execControlled(exec, control, initialValue) {
     const subject = new rxjs_1.BehaviorSubject(initialValue);
     const doExec = () => execAndForward(exec, subject, () => control(doExec));
     doExec();

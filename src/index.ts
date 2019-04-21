@@ -10,7 +10,7 @@ function execAndForward<T>(exec: Executor<T>, subject: BehaviorSubject<T>, cb?: 
     });
 };
 
-export function execAlways<T>(exec: Executor<T>, initialValue: T) {
+export function execAlways<T>(exec: Executor<T>, initialValue?: T) {
     const subject = new BehaviorSubject(initialValue);
 
     return new Observable(observer => {
@@ -26,14 +26,14 @@ export function execAlways<T>(exec: Executor<T>, initialValue: T) {
     });
 }
 
-export function execOnce<T>(exec: Executor<T>, initialValue: T) {
+export function execOnce<T>(exec: Executor<T>, initialValue?: T) {
     const subject = new BehaviorSubject(initialValue);
     execAndForward(exec, subject);
 
     return subject;
 }
 
-export function execControlled<T>(exec: Executor<T>, initialValue: T, control: any) {
+export function execControlled<T>(exec: Executor<T>, control: any, initialValue?: T) {
     const subject = new BehaviorSubject(initialValue);
 
     const doExec = () => execAndForward(exec, subject, () => control(doExec));
