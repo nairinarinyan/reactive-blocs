@@ -23,10 +23,11 @@
     "homepage": "https://github.com/nairinarinyan/reactive-blocs#readme",
     "peerDependencies": {
         "rxjs": "^6.4.0",
-        "react": "^16.8.6",
-        "react-dom": "^16.8.6"
+        "react": "^16.8.6"
     },
     "devDependencies": {
+        "@types/react": "^16.8.14",
+        "react": "^16.8.6",
         "typescript": "^3.4.2"
     },
     "dependencies": {
