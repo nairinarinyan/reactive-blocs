@@ -33,11 +33,11 @@ export function execOnce<T>(exec: Executor<T>, initialValue?: T) {
     return subject;
 }
 
-export function execControlled<T>(exec: Executor<T>, control: any, initialValue?: T) {
+export function execControlled<T>(exec: Executor<T>, control: any, initialValue?: T, executeImmediately = true) {
     const subject = new BehaviorSubject(initialValue);
 
     const doExec = () => execAndForward(exec, subject, () => control(doExec));
-    doExec();
+    executeImmediately && doExec();
 
     return subject;
 }
