@@ -1,10 +1,12 @@
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
-type Executor<T> = () => Observable<T>;
+export type Executor<T> = (...execArgs: any[]) => Observable<T>;
+export type ExecPerformer = (...execArgs: any[]) => void;
+export type Control = (execPerformer: ExecPerformer) => any;
 
-function execAndForward<T>(exec: Executor<T>, subject: BehaviorSubject<T>, cb?: () => void) {
-    exec().subscribe((val: any) => {
+function execAndForward<T>(exec: Executor<T>, subject: BehaviorSubject<T>, cb?: () => void, execArgs?: any[]) {
+    exec(...execArgs).subscribe((val: any) => {
         subject.next(val);
         cb && cb();
     });
@@ -33,10 +35,10 @@ export function execOnce<T>(exec: Executor<T>, initialValue?: T) {
     return subject;
 }
 
-export function execControlled<T>(exec: Executor<T>, control: any, initialValue?: T, executeImmediately = true) {
+export function execControlled<T>(exec: Executor<T>, control: Control, initialValue?: T, executeImmediately = true) {
     const subject = new BehaviorSubject(initialValue);
 
-    const doExec = () => execAndForward(exec, subject, () => control(doExec));
+    const doExec: ExecPerformer = (...execArgs: any[]) => execAndForward(exec, subject, () => control(doExec), execArgs);
     executeImmediately && doExec();
 
     return subject;
