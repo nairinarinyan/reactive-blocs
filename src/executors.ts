@@ -5,10 +5,9 @@ export type Executor<T> = (...execArgs: any[]) => Observable<T>;
 export type ExecPerformer = (...execArgs: any[]) => void;
 export type Control = (execPerformer: ExecPerformer) => any;
 
-function execAndForward<T>(exec: Executor<T>, subject: BehaviorSubject<T>, cb?: () => void, execArgs?: any[]) {
+function execAndForward<T>(exec: Executor<T>, subject: BehaviorSubject<T>, execArgs?: any[]) {
     exec(...execArgs).subscribe((val: any) => {
         subject.next(val);
-        cb && cb();
     });
 };
 
@@ -38,7 +37,8 @@ export function execOnce<T>(exec: Executor<T>, initialValue?: T) {
 export function execControlled<T>(exec: Executor<T>, control: Control, initialValue?: T, executeImmediately = true) {
     const subject = new BehaviorSubject(initialValue);
 
-    const doExec: ExecPerformer = (...execArgs: any[]) => execAndForward(exec, subject, () => control(doExec), execArgs);
+    const doExec: ExecPerformer = (...execArgs: any[]) => execAndForward(exec, subject, execArgs);
+    control(doExec);
     executeImmediately && doExec();
 
     return subject;
