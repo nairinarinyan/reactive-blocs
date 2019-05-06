@@ -1,6 +1,6 @@
 {
     "name": "reactive-blocs",
-    "version": "0.0.6",
+    "version": "0.0.61",
     "description": "Reactive Blocs",
     "main": "index.js",
     "scripts": {
@@ -27,6 +27,7 @@
     },
     "devDependencies": {
         "@types/react": "^16.8.14",
+        "react": "^16.8.6",
         "rxjs": "^6.5.1",
         "typescript": "^3.4.2"
     }
