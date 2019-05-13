@@ -5,7 +5,7 @@ export type Executor<T> = (...execArgs: any[]) => Observable<T>;
 export type ExecPerformer = (...execArgs: any[]) => void;
 export type Control = (execPerformer: ExecPerformer) => any;
 
-function execAndForward<T>(exec: Executor<T>, subject: BehaviorSubject<T>, execArgs?: any[]) {
+function execAndForward<T>(exec: Executor<T>, subject: BehaviorSubject<T>, execArgs: any[] = []) {
     exec(...execArgs).subscribe((val: any) => {
         subject.next(val);
     });
