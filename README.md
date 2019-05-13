@@ -3,6 +3,11 @@
 
 ## ⚠ WIP
 
+# Abstract
+BLOC stands for Business Logic Component. It's pattern originally created at Google for Flutter apps.  
+This repository is a collection of utilities and guides for applying BLOC pattern in React apps using Reactive Functional Programming techniques.  
+It also introduces new concepts such as `link`, `executors` and others.
+
 # Hooks
 `useBloc<T>(field: Observable<T> | (() => Observable<T>)): T`
 
@@ -79,6 +84,8 @@ class ResourceBloc {
 ```
 
 # Link
+
+`link: (source: Observable<any>, target: Subject<any>, labels?: string[]) => void`
 
 One of the most important advantage of reactive/push-based systems is that you can declaratively describe connections between parts of business logic at "**construction time**".  
 It means you get **declarative**, **transparent** and **obvious** connections of your business logic graph. Which gives us a possibility to draw our business logic as a graph where nodes `BLOC`s, and edges are `Link`s.  
