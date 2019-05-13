@@ -77,3 +77,100 @@ class ResourceBloc {
     }
 }
 ```
+
+# Link
+
+One of the most important advantage of reactive/push-based systems is that you can declaratively describe connections between parts of business logic at "**construction time**".  
+It means you get **declarative**, **transparent** and **obvious** connections of your business logic graph. Which gives us a possibility to draw our business logic as a graph where nodes `BLOC`s, and edges are `Link`s.  
+Creating DevTools supporting this mechanism is in progress.
+
+`link` function creates a link between two BLOCs. BLOC `Link` is a "reactive connection" between BLOC input and output streams. 
+Those are `Observable` fields, often `Subjects` or `BehaviorSubjects`.
+
+```ts
+import { Subject, throwError } from 'rxjs';
+import { execOnce, link } from 'reactive-blocs';
+import { httpService } from '../services/http.service';
+import { mapTo, catchError } from 'rxjs/operators';
+
+class AuthBloc {
+    isLoggedIn = execOnce(() => httpService.get('/me').pipe(mapTo(true)), null);
+    error = new Subject();
+
+    constructor() {
+        link(httpService.authError, this.isLoggedIn);
+        link(this.error, notificationBloc.receiver);
+    }
+
+    login(email: string, password: string, history: History) {
+        httpService.post('/login', { email, password }, true).pipe(
+            catchError(err => {
+                this.error.next('Wrong credentials');
+                return throwError(err);
+            })
+        )
+        .subscribe(() => this.isLoggedIn.next(true));
+    }
+}
+
+export const authBloc = new AuthBloc();
+```
+
+In this example the login state is initially `null`, then it's defined by making a single call to `/me` api endpoint.  
+
+`httpService.authError` is an output stream describing an auth error (e.g. result of an http call was `401`).  
+At construction time we create a link between `httpService.authError` and current `isLoggedIn` state.  
+
+Then we link `this.error` and `notificationBloc.receiver` which is an input stream of `notificationBloc`. This is useful when a wrong credentials are used during login and `this.error` emits in `catchError`.  `notificationBloc.receiver` is reported about it and it shows a notification.  
+
+
+**notification.bloc.tsx**
+```ts
+import { Observable, of, merge, BehaviorSubject, Subject } from 'rxjs';
+import { switchMap, delay } from 'rxjs/operators';
+
+export class Notification {
+    constructor(public message: string, public shown: boolean) {}
+}
+
+class NotificationBloc {
+    receiver = new Subject();
+    notification = new BehaviorSubject<Notification>(new Notification(null, false));
+
+    constructor() {
+        this.receiver.pipe(
+                switchMap(this.createMessageStream)
+            )
+            .subscribe(message => this.notification.next(message));
+    }
+
+    private createMessageStream(message: string): Observable<Notification> {
+        const messageStream = of(new Notification(message, true));
+        const resetStream = of(new Notification(message, false)).pipe(delay(2000));
+
+        return merge(messageStream, resetStream);
+    }
+}
+
+export const notificationBloc = new NotificationBloc();
+```
+
+**notification.tsx**
+```tsx
+import React from 'react';
+import { useBloc } from 'reactive-blocs';
+import { classes } from 'react-scoped-styles';
+import { notificationBloc } from './notification.bloc';
+
+import './notification.styl';
+
+export const Notification = () => {
+    const { shown, message } = useBloc(notificationBloc.notification);
+
+    return (
+        <div className={classes('notification', [shown, 'shown'])}>
+            {message}
+        </div>
+    )
+};
+```
