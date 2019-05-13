@@ -17,14 +17,13 @@ export const currentEvent = events.pipe(
 );
 
 export const link = (source: Observable<any>, target: Subject<any>, labels?: string[]) => {
-    const [from, to] = labels;
-
     if (labels) {
         blocs.next(unique(blocs.getValue().concat(labels)));
     }
 
     source.subscribe(val => {
         if (labels) {
+            const [from, to] = labels;
             const event: Event = {
                 from, to,
                 payload: val

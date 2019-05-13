@@ -4,7 +4,7 @@
 ## ⚠ WIP
 
 # Abstract
-BLOC stands for Business Logic Component. It's pattern originally created at Google for Flutter apps.  
+BLOC stands for Business Logic Component. It was originally created at Google for Flutter apps.  
 This repository is a collection of utilities and guides for applying BLOC pattern in React apps using Reactive Functional Programming techniques.  
 It also introduces new concepts such as `link`, `executors` and others.
 
@@ -109,7 +109,7 @@ class AuthBloc {
         link(this.error, notificationBloc.receiver);
     }
 
-    login(email: string, password: string, history: History) {
+    login(email: string, password: string) {
         httpService.post('/login', { email, password }, true).pipe(
             catchError(err => {
                 this.error.next('Wrong credentials');
