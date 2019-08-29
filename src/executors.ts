@@ -1,17 +1,17 @@
 import { Observable, BehaviorSubject, of, Subject, merge, Subscriber, Subscription, SubscriptionLike, throwError } from 'rxjs';
 import { distinctUntilChanged, mergeMap, catchError, share, switchMap, filter, tap } from 'rxjs/operators';
 
-export type Executor<T> = (...execArgs: any[]) => Observable<T>;
-export type ExecPerformer = (...execArgs: any[]) => void;
-export type Control = (execPerformer: ExecPerformer) => any;
+export type Executor<T, A> = (execArgs?: A) => Observable<T>;
+export type ExecPerformer<A> = (execArgs?: A) => void;
+export type Control<A> = (execPerformer: ExecPerformer<A>) => any;
 
-function execAndForward<T>(exec: Executor<T>, subject: BehaviorSubject<T>, execArgs: any[] = []) {
-    exec(...execArgs).subscribe((val: any) => {
+function execAndForward<T, A>(exec: Executor<T, A>, subject: BehaviorSubject<T>, execArgs?: A) {
+    exec(execArgs).subscribe((val: any) => {
         subject.next(val);
     });
 };
 
-export function execAlways<T>(exec: Executor<T>, initialValue?: T) {
+export function execAlways<T, A>(exec: Executor<T, A>, initialValue?: T) {
     const subject = new BehaviorSubject(initialValue);
 
     return new Observable(observer => {
@@ -27,28 +27,28 @@ export function execAlways<T>(exec: Executor<T>, initialValue?: T) {
     }) as Observable<T>;
 }
 
-export function execOnce<T>(exec: Executor<T>, initialValue?: T) {
+export function execOnce<T, A>(exec: Executor<T, A>, initialValue?: T) {
     const subject = new BehaviorSubject(initialValue);
     execAndForward(exec, subject);
 
     return subject;
 }
 
-export function execControlled<T>(exec: Executor<T>, control: Control, initialValue?: T, executeImmediately = true) {
+export function execControlled<T, A>(exec: Executor<T, A>, control: Control<A>, initialValue?: T, executeImmediately = true) {
     const subject = new BehaviorSubject(initialValue);
 
-    const doExec: ExecPerformer = (...execArgs: any[]) => execAndForward(exec, subject, execArgs);
+    const doExec: ExecPerformer<A> = (execArgs?: A) => execAndForward(exec, subject, execArgs);
     control(doExec);
     executeImmediately && doExec();
 
     return subject;
 }
 
-export class ExecSubject<T> extends BehaviorSubject<T> {
-    private _executionStream = new Subject<any>();
+export class ExecSubject<T, A> extends BehaviorSubject<T> {
+    private _executionStream = new Subject<A>();
 
     constructor(
-        private _executor: Executor<T>,
+        private _executor: Executor<T, A>,
         _initialValue?: T,
         private _error ?: BehaviorSubject<Error>,
     ) {
@@ -69,17 +69,17 @@ export class ExecSubject<T> extends BehaviorSubject<T> {
         ).subscribe(val => this.next(val as T));
     }
 
-    private performExec<T>(exec: Executor<T>, args: any) { 
+    private performExec<T>(exec: Executor<T, A>, args: A) {
         return exec(args).pipe(
             catchError(err => of(new Error(err)))
         );
     };
 
-    exec(args: any) {
+    exec(args: A) {
         this._executionStream.next(args);
     }
 }
 
-export function exec<T>(exec: Executor<T>, initialValue?: T, error?: BehaviorSubject<Error>): ExecSubject<T> {
-    return new ExecSubject<T>(exec, initialValue, error);
+export function exec<T, A>(exec: Executor<T, A>, initialValue?: T, error?: BehaviorSubject<Error>): ExecSubject<T, A> {
+    return new ExecSubject<T, A>(exec, initialValue, error);
 }
