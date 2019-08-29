@@ -1,6 +1,7 @@
 node_modules
 build
 notes.md
+examples
 *.js
 *.d.ts
 *.tgz
