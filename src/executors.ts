@@ -51,6 +51,7 @@ export class ExecSubject<T, A> extends BehaviorSubject<T> {
         private _executor: Executor<T, A>,
         _initialValue?: T,
         private _error ?: BehaviorSubject<Error>,
+        private _loading ?: BehaviorSubject<boolean>,
     ) {
         super(_initialValue);
         this.init();
@@ -60,6 +61,8 @@ export class ExecSubject<T, A> extends BehaviorSubject<T> {
         this._executionStream.pipe(
             switchMap(args => this.performExec(this._executor, args)),
             tap(error => {
+                this._loading && this._loading.next(false);
+
                 if (error instanceof Error && this._error) {
                     this._error.next(error);
                 }
@@ -76,10 +79,11 @@ export class ExecSubject<T, A> extends BehaviorSubject<T> {
     };
 
     exec(args: A) {
+        this._loading && this._loading.next(true);
         this._executionStream.next(args);
     }
 }
 
-export function exec<T, A>(exec: Executor<T, A>, initialValue?: T, error?: BehaviorSubject<Error>): ExecSubject<T, A> {
-    return new ExecSubject<T, A>(exec, initialValue, error);
+export function exec<T, A>(exec: Executor<T, A>, initialValue?: T, error?: BehaviorSubject<Error>, loading?: BehaviorSubject<boolean>): ExecSubject<T, A> {
+    return new ExecSubject<T, A>(exec, initialValue, error, loading);
 }
