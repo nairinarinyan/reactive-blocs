@@ -1,6 +1,6 @@
 {
     "name": "reactive-blocs",
-    "version": "0.0.30",
+    "version": "0.0.35",
     "description": "Reactive Blocs",
     "main": "index.js",
     "scripts": {

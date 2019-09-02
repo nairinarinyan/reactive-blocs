@@ -1,5 +1,5 @@
-import { Observable, BehaviorSubject, of, Subject, merge, Subscriber, Subscription, SubscriptionLike, throwError } from 'rxjs';
-import { distinctUntilChanged, mergeMap, catchError, share, switchMap, filter, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of, Subject } from 'rxjs';
+import { distinctUntilChanged, catchError, share, switchMap, filter, tap } from 'rxjs/operators';
 
 export type Executor<T, A> = (execArgs?: A) => Observable<T>;
 export type ExecPerformer<A> = (execArgs?: A) => void;
