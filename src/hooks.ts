@@ -8,7 +8,7 @@ export function useBloc<T, A = any>(field: Observable<T> | (() => Observable<T>)
     let value: T = null;
     let setValue: any = null;
 
-    useExec<T, A>(args => (field as ExecSubject<T, A>).exec(args));
+    args && useExec<T, A>(args => (field as ExecSubject<T, A>).exec(args), args);
 
     const subscription = useMemo(() => {
         const subscription = (typeof field === 'function' ? field() : field).subscribe((val: T) => {
