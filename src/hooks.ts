@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ExecSubject, Executor } from './executors';
 import { isPlainObject, compare } from './utils';
 
-export function useBloc<T, A>(field: Observable<T> | (() => Observable<T>), args?: A): T {
+export function useBloc<T, A = any>(field: Observable<T> | (() => Observable<T>), args?: A): T {
     let initialValue: T = null;
     let value: T = null;
     let setValue: any = null;
@@ -29,7 +29,7 @@ export function useBloc<T, A>(field: Observable<T> | (() => Observable<T>), args
     return value;
 }
 
-export function useExec<T, A>(exec: (args: A) => any, args?: A) {
+export function useExec<T, A = any>(exec: (args: A) => any, args?: A) {
     const argsRef = useRef<A>(null);
 
     useMemo(() => {
