@@ -44,15 +44,15 @@ export function execControlled<T, A = any>(exec: Executor<T, A>, control: Contro
     return subject;
 }
 
-export class ExecSubject<T, A> extends BehaviorSubject<T> {
+export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
     private _executionStream = new Subject<A>();
 
     constructor(
         private _executor: Executor<T, A>,
         _initialValue?: T,
+        private _initialParams?: A,
         private _error?: BehaviorSubject<Error>,
         private _loading?: BehaviorSubject<boolean>,
-        private _initialParams?: A,
     ) {
         super(_initialValue);
         this.init();
@@ -89,9 +89,9 @@ export class ExecSubject<T, A> extends BehaviorSubject<T> {
 export function exec<T, A = any>(
     exec: Executor<T, A>,
     initialValue?: T,
+    initialParams?: A,
     error?: BehaviorSubject<Error>,
     loading?: BehaviorSubject<boolean>,
-    initialParams?: A
 ): ExecSubject<T, A> {
-    return new ExecSubject<T, A>(exec, initialValue, error, loading, initialParams);
+    return new ExecSubject<T, A>(exec, initialValue, initialParams, error, loading);
 }
