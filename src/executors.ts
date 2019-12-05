@@ -1,5 +1,6 @@
 import { Observable, BehaviorSubject, of, Subject } from 'rxjs';
 import { distinctUntilChanged, catchError, share, switchMap, filter, tap } from 'rxjs/operators';
+import { actionOf, dispatch } from './actions';
 
 export type Executor<T, A = any> = (execArgs?: A) => Observable<T>;
 export type ExecPerformer<A = any> = (execArgs?: A) => void;
@@ -45,7 +46,8 @@ export function execControlled<T, A = any>(exec: Executor<T, A>, control: Contro
 }
 
 export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
-    private _executionStream = new Subject<A>();
+    private _execActionName = (Math.random() * 1000 << 0).toString();
+    // private _executionStream = new Subject<A>();
 
     constructor(
         private _executor: Executor<T, A>,
@@ -60,18 +62,20 @@ export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
     }
 
     private init() {
-        this._executionStream.pipe(
-            switchMap(args => this.performExec(this._executor, args)),
-            tap(error => {
-                this._loading && this._loading.next(false);
+        actionOf(this._execActionName, (args: A) => this.performExec(this._executor, args));
 
-                if (error instanceof Error && this._error) {
-                    this._error.next(error);
-                }
-            }),
-            filter(result => !(result instanceof Error)),
-            share(),
-        ).subscribe(val => this.next(val as T));
+        // this._executionStream.pipe(
+        //     switchMap(args => this.performExec(this._executor, args)),
+        //     tap(error => {
+        //         this._loading && this._loading.next(false);
+
+        //         if (error instanceof Error && this._error) {
+        //             this._error.next(error);
+        //         }
+        //     }),
+        //     filter(result => !(result instanceof Error)),
+        //     share(),
+        // ).subscribe(val => this.next(val as T));
     }
 
     private performExec<T>(exec: Executor<T, A>, args: A) {
@@ -82,7 +86,23 @@ export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
 
     exec(args?: A) {
         this._loading && this._loading.next(true);
-        this._executionStream.next(args);
+        // this._executionStream.next(args);
+
+        const res = dispatch(this._execActionName, args).pipe(
+            tap(result => {
+                this._loading && this._loading.next(false);
+
+                if (result instanceof Error && this._error) {
+                    this._error.next(result);
+                }
+            }),
+            filter(result => !(result instanceof Error)),
+            share(),
+        )
+
+        res.subscribe(val => this.next(val as T));
+
+        return res;
     }
 }
 
