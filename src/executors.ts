@@ -58,7 +58,7 @@ export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
     ) {
         super(_initialValue);
         this.init();
-        this._initialParams && this.exec(_initialParams);
+        this._initialParams !== undefined && this.exec(_initialParams);
     }
 
     private init() {
