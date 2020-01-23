@@ -88,7 +88,7 @@ export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
         this._loading && this._loading.next(true);
         // this._executionStream.next(args);
 
-        const res = dispatch(this._execActionName, args).pipe(
+        const res = dispatch<A>(this._execActionName, args).pipe(
             tap(result => {
                 this._loading && this._loading.next(false);
 
@@ -98,7 +98,7 @@ export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
             }),
             filter(result => !(result instanceof Error)),
             share(),
-        )
+        ) as Observable<T>;
 
         res.subscribe(val => this.next(val as T));
 
