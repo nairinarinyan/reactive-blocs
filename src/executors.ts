@@ -46,7 +46,7 @@ export function execControlled<T, A = any>(exec: Executor<T, A>, control: Contro
 }
 
 export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
-    private _execActionName = (Math.random() * 1000 << 0).toString();
+    private _execActionName = (Math.random() * (10000 - 100) + 100 << 0).toString();
     // private _executionStream = new Subject<A>();
 
     constructor(
@@ -96,7 +96,7 @@ export class ExecSubject<T, A = any> extends BehaviorSubject<T> {
                     this._error.next(result);
                 }
             }),
-            filter(result => !(result instanceof Error)),
+            filter(result => !(this._error && result instanceof Error)),
             share(),
         ) as Observable<T>;
 
