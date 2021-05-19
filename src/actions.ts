@@ -2,13 +2,13 @@ import { Subject, Observable, isObservable } from 'rxjs';
 import { filter, mergeMap, map } from 'rxjs/operators';
 
 export interface Action<T = any> {
-    id?: number;
+    id?: string;
     type: string;
     args: T;
 }
 
 export interface ActionResult {
-    id: number;
+    id: string;
     result: any;
 }
 
@@ -42,7 +42,7 @@ export const actionOf = <T = any>(type: string, handler: ActionHandler<T>) => {
 
 export const dispatch = <T = any>(type: string, args?: T) => {
     const action: Action = {
-        id: Math.random() * (100000 - 100) + 100 << 0,
+        id: (Math.random() * 1000000 << 0).toString(16),
         type, args
     };
 

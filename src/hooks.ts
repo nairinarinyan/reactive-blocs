@@ -1,17 +1,19 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Observable } from 'rxjs';
-import { ExecSubject, Executor } from './executors';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ReactiveValue } from './primitives';
 import { isPlainObject, compare } from './utils';
 
-export function useBloc<T, A = any>(field: Observable<T> | (() => Observable<T>), args?: A): T {
-    let initialValue: T = null;
-    let value: T = null;
+const isReactive = <T>(field: Observable<T> | ReactiveValue<T>): field is ReactiveValue<T> => {
+    return (field as ReactiveValue<T>).isReactive;
+};
+
+export function useBloc<T>(field: Observable<T> | ReactiveValue<T> | BehaviorSubject<T>, label?: string): T {
+    let initialValue: T = isReactive(field) ? field.value : undefined;
+    let value: T = undefined;
     let setValue: any = null;
 
-    args && useExec<T, A>(args => (field as ExecSubject<T, A>).exec(args), args);
-
     const subscription = useMemo(() => {
-        const subscription = (typeof field === 'function' ? field() : field).subscribe((val: T) => {
+        const subscription = field.subscribe((val: T) => {
             if (setValue) {
                 setValue(val);
             } else {
