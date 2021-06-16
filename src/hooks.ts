@@ -7,7 +7,7 @@ const isReactive = <T>(field: Observable<T> | ReactiveValue<T>): field is Reacti
     return (field as ReactiveValue<T>).isReactive;
 };
 
-export function useBloc<T>(field: Observable<T> | ReactiveValue<T> | BehaviorSubject<T>, label?: string): T {
+export function useValue<T>(field: Observable<T> | ReactiveValue<T> | BehaviorSubject<T>, label?: string): T {
     let initialValue: T = isReactive(field) ? field.value : undefined;
     let value: T = undefined;
     let setValue: any = null;
