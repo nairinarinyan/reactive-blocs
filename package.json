@@ -1,6 +1,6 @@
 {
     "name": "reactive-blocs",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Reactive Blocs",
     "main": "index.js",
     "scripts": {
@@ -23,12 +23,12 @@
     "homepage": "https://github.com/nairinarinyan/reactive-blocs#readme",
     "peerDependencies": {
         "react": "^17.0.1",
-        "rxjs": "^6.6.7"
+        "rxjs": "^7.3.0"
     },
     "devDependencies": {
         "@types/react": "^16.8.14",
         "react": "17.0.1",
-        "rxjs": "6.6.7",
-        "typescript": "^3.4.2"
+        "rxjs": "7.3.0",
+        "typescript": "^4.3.5"
     }
 }
