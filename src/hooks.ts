@@ -8,8 +8,8 @@ const isReactive = <T>(field: Observable<T> | ReactiveValue<T>): field is Reacti
 };
 
 export function useValue<T>(field: Observable<T> | ReactiveValue<T> | BehaviorSubject<T>, label?: string): T {
-    let initialValue: T = isReactive(field) ? field.value : undefined;
-    let value: T = undefined;
+    let initialValue = isReactive(field) ? field.value : undefined;
+    let value: T | undefined = undefined;
     let setValue: any = null;
 
     const subscription = useMemo(() => {
@@ -26,27 +26,27 @@ export function useValue<T>(field: Observable<T> | ReactiveValue<T> | BehaviorSu
 
     useEffect(() => () => subscription.unsubscribe(), []);
 
-    [value as T, setValue] = useState<T>(initialValue);
+    [value, setValue] = useState<T>(initialValue as T);
 
     return value;
 }
 
-export function useExec<T, A = any>(exec: (args: A) => any, args?: A) {
-    const argsRef = useRef<A>(null);
+// export function useExec<T, A = any>(exec: (args: A) => any, args?: A) {
+//     const argsRef = useRef<A>(null);
 
-    useMemo(() => {
-        if (args == undefined) {
-            return;
-        }
+//     useMemo(() => {
+//         if (args == undefined) {
+//             return;
+//         }
 
-        if (isPlainObject(args)) {
-            if(!argsRef.current || !compare(argsRef.current, args)) {
-                exec(args);
-                argsRef.current = args;
-            }
-        } else {
-            exec(args);
-        }
-    }, [args, argsRef.current]);
+//         if (isPlainObject(args)) {
+//             if(!argsRef.current || !compare(argsRef.current, args)) {
+//                 exec(args);
+//                 argsRef.current = args;
+//             }
+//         } else {
+//             exec(args);
+//         }
+//     }, [args, argsRef.current]);
 
-};
+// };
