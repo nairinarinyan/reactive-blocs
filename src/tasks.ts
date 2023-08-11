@@ -6,24 +6,24 @@ import { generateId } from './utils';
 
 export type Executor<T, A> = (execArgs: A) => Promise<T> | T;
 
-export type Task<T, A> = {
+export type Task<T, A, E extends Error> = {
   result: ReactiveValue<T>;
   execute(args?: A, ignoreError?: boolean): Promise<T | null>;
   loading: BehaviorSubject<boolean>;
-  error: BehaviorSubject<Error | null>;
+  error: BehaviorSubject<E | null>;
 };
 
-export const createTask = <T, A>(
+export const createTask = <T, A, E extends Error = Error>(
   executor: Executor<T, A>,
   initialValue?: T,
   initialParams?: A,
-): Task<T, A> => {
+): Task<T, A, E> => {
   const { actionOf, dispatch } = createActionContext();
   const actionName = generateId();
 
   const result = createValue(initialValue);
   const loading = new BehaviorSubject(false);
-  const error = new BehaviorSubject<Error | null>(null);
+  const error = new BehaviorSubject<E | null>(null);
 
   const reset = () => {
     if (result.value !== initialValue) {
@@ -43,7 +43,7 @@ export const createTask = <T, A>(
         tap(() => loading.next(false)),
         filter(res => {
           if (res instanceof Error) {
-            error.next(res);
+            error.next(res as E);
             ignoreErorr ? resolve(null) : reject(res)
             return false;
           } else {

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Task } from "../tasks";
 
-type Handles<T> = {
+type Handles<T, E extends Error> = {
   result: T, 
   loading: boolean,
-  error: Error | null,
+  error: E | null,
 };
 
-export const useTask = <T, A>(task: Task<T, A>): Handles<T> => {
+export const useTask = <T, A, E extends Error>(task: Task<T, A, E>): Handles<T, E> => {
   const [result, setResult] = useState(task.result.value);
   const [loading, setLoading] = useState(task.loading.value);
   const [error, setError] = useState(task.error.value);
